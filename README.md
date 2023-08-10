@@ -5,7 +5,7 @@
 支持滑动列表和列表元素自动布局<br> 
 使用规则详见文档：Assets/PSD2UGUI/Doc/“使用说明”<br> 
 ----------------------------------------------------------------------
-  测试所用版本，unity 版本：5.3.3f1，ps版本：cs6 64位<br> 
+  测试所用版本，unity 版本：2021.3.28f1，ps版本：cs2022.v23 64位<br> 
 ## 使用
 * 将脚本文件 Export PSDUI.jsx拷贝至“ps安装目录\Presets\Scripts”目录下，如：“E:\Program Files\PS\Adobe Photoshop CS6 (64 Bit)\Presets\Scripts”。
 * 打开一个psd文件，在cs6中选择“文件->脚本->Export PSDUI”，会弹框选择一个目录，存放脚本运行时的切图和配置文件(xml)。
