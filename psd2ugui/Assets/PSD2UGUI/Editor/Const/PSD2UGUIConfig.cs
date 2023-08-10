@@ -8,7 +8,7 @@ public class PSD2UGUIConfig : ScriptableObject
     public string _BaseFolderPath = PSDImporterConst.BaseFolder;
 
     //[Header("通用配置路径")]
-    public string m_configAssetPath => PSDImporterConst.__CONFIG_PATH;
+    //public string m_configAssetPath => PSDImporterConst.ConfigPath;
 
     [Header("通用图集路径")]
     public string m_commonAtlasPath = PSDImporterConst.Globle_BASE_FOLDER;

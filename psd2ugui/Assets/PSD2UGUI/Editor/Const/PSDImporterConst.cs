@@ -12,9 +12,13 @@ namespace PSDUIImporter
 
         public static string DefaultBaseFolder = "Assets/PSD2UGUI/";
         public static string BaseFolder = DefaultBaseFolder;
-        public static string DefaultConfigPath => GetDefaultConfigPath(BaseFolder);
-        public static string GetDefaultConfigPath(string baseFolder) => baseFolder + "PSD2UGUIConfig.asset";
-        public static string __CONFIG_PATH => DefaultConfigPath;
+        //public static string DefaultConfigPath => GetDefaultConfigPath(BaseFolder);
+        //public static string GetDefaultConfigPath(string baseFolder) => baseFolder + "PSD2UGUIConfig.asset";
+        //public static string CONFIG_PATH => DefaultConfigPath;
+
+        public static string ConfigPath => ConfigPathRelative;//Application.dataPath + ConfigPathRelative;
+        public static string ConfigPathRelativeUnderDataPath => "/PSD2UGUI/Editor/PSD2UGUIConfig.asset";
+        public static string ConfigPathRelative => "Assets" + ConfigPathRelativeUnderDataPath;
 
         /// <summary>
         /// 公用图片路径，按需修改
@@ -83,20 +87,20 @@ namespace PSDUIImporter
         /// </summary>
         public static void LoadConfig([CallerFilePath] string filePath = default)
         {
-            var configPath = __CONFIG_PATH;
-            if (!string.IsNullOrEmpty(filePath))
-            {
-                var convertedFilePath = filePath.Replace(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
-                convertedFilePath = Path.GetDirectoryName(convertedFilePath);
-                //convertedFilePath = $"{convertedFilePath}/../../";
-                convertedFilePath = Path.GetDirectoryName(convertedFilePath);
-                convertedFilePath = Path.GetDirectoryName(convertedFilePath);
-                convertedFilePath = convertedFilePath.Replace(@"\", "/");
-                var basePath = convertedFilePath.Replace(Application.dataPath, "Assets");
-                //basePath.Replace("Editor/Core/", "");
-                basePath = $"{basePath}/";
-                configPath = GetDefaultConfigPath(basePath);
-            }
+            /*var configPath = CONFIG_PATH;
+            var convertedFilePath = filePath.Replace(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+            convertedFilePath = Path.GetDirectoryName(convertedFilePath);
+            //convertedFilePath = $"{convertedFilePath}/../../";
+            convertedFilePath = Path.GetDirectoryName(convertedFilePath);
+            convertedFilePath = Path.GetDirectoryName(convertedFilePath);
+            convertedFilePath = convertedFilePath.Replace(@"\", "/");
+            var basePath = convertedFilePath.Replace(Application.dataPath, "Assets");
+            //basePath.Replace("Editor/Core/", "");
+            basePath = $"{basePath}/";
+            configPath = GetDefaultConfigPath(basePath);*/
+
+            var configPath = ConfigPath;
+
             // 重读资源路径
             PSD2UGUIConfig _config = AssetDatabase.LoadAssetAtPath<PSD2UGUIConfig>(configPath);
 
@@ -131,6 +135,10 @@ namespace PSDUIImporter
                 ASSET_PATH_TABGROUP = PSDUI_PATH + "TabGroup" + PSDUI_SUFFIX;
 
                 Debug.Log("Load config.");
+            }
+            else
+            {
+                Debug.LogError("Use QuickTool/PSD2UGUISettingWizard to generate config");
             }
 
             // Debug.LogError(_config.m_staticFontPath);

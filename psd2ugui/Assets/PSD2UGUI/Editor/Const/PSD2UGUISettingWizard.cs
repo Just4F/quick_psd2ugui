@@ -21,9 +21,9 @@ public class PSD2UGUISettingWizard : ScriptableWizard
 
     private void LoadOrCreateConfig()
     {
-        if (File.Exists(PSDImporterConst.__CONFIG_PATH))
+        if (File.Exists(PSDImporterConst.ConfigPath))
         {
-            m_config = Instantiate(AssetDatabase.LoadAssetAtPath<PSD2UGUIConfig>(PSDImporterConst.__CONFIG_PATH));
+            m_config = Instantiate(AssetDatabase.LoadAssetAtPath<PSD2UGUIConfig>(PSDImporterConst.ConfigPath));
 
             Debug.Log("读取配置");
         }
@@ -142,11 +142,11 @@ public class PSD2UGUISettingWizard : ScriptableWizard
 
 
         EditorGUILayout.BeginHorizontal();
-        EditorGUILayout.LabelField("配置文件路径:", m_config.m_configAssetPath);
+        EditorGUILayout.LabelField("配置文件路径:", PSDImporterConst.ConfigPathRelative);
 
         EditorGUILayout.EndHorizontal();
 
-        var str = File.Exists(PSDImporterConst.__CONFIG_PATH) ? "写入" : "创建";
+        var str = File.Exists(PSDImporterConst.ConfigPath) ? "写入" : "创建";
         if (GUILayout.Button(str))
         {
             if (string.IsNullOrEmpty(m_config.m_commonAtlasPath) ||
@@ -211,7 +211,13 @@ public class PSD2UGUISettingWizard : ScriptableWizard
 
         //_psd2UguiConfig = m_config;
 
-        var path = m_config.m_configAssetPath;
+        var path = PSDImporterConst.ConfigPath;
+        var folder = Path.GetDirectoryName(path);
+        if (!Directory.Exists(folder))
+        {
+            Directory.CreateDirectory(folder);
+        }
+
         AssetDatabase.DeleteAsset(path);
 
         AssetDatabase.CreateAsset(m_config, path);
