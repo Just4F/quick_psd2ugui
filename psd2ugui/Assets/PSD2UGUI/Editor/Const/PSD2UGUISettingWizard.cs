@@ -37,6 +37,27 @@ public class PSD2UGUISettingWizard : ScriptableWizard
     {
         EditorGUILayout.BeginHorizontal();
 
+        EditorGUILayout.TextField("PSD2UGUI文件夹路径:", m_config._BaseFolderPath);
+        if (GUILayout.Button("选择文件夹"))
+        {
+            string _path = EditorUtility.OpenFolderPanel("选择文件夹", Application.dataPath, string.Empty).Replace('\\', '/');
+
+            _path = GetValue(_path);
+
+            m_config._BaseFolderPath = _path;
+            if (!string.IsNullOrEmpty(_path))
+            {
+                PSDImporterConst.BaseFolder = _path;
+            }
+        }
+        EditorGUILayout.EndHorizontal();
+
+        EditorGUILayout.Separator();
+
+
+
+        EditorGUILayout.BeginHorizontal();
+
         // 公用图片路径
         EditorGUILayout.TextField("公用图集路径:", m_config.m_commonAtlasPath);
 
@@ -56,6 +77,10 @@ public class PSD2UGUISettingWizard : ScriptableWizard
         m_config.m_commonAtlasName = EditorGUILayout.TextField("公用图集名:", m_config.m_commonAtlasName);
 
         EditorGUILayout.EndHorizontal();
+
+        EditorGUILayout.Separator();
+
+
 
         EditorGUILayout.BeginHorizontal();
 
@@ -91,24 +116,38 @@ public class PSD2UGUISettingWizard : ScriptableWizard
 
         EditorGUILayout.EndHorizontal();
 
+        EditorGUILayout.Separator();
+
+
+
         EditorGUILayout.BeginHorizontal();
 
-        EditorGUILayout.TextField("默认资源模板加载路径:", m_config.m_psduiTemplatePath);
+        //EditorGUILayout.TextField("默认资源模板加载路径:", m_config.m_psduiTemplatePath);
+        EditorGUILayout.LabelField("默认资源模板加载路径:", m_config.m_psduiTemplatePath);
 
-        if (GUILayout.Button("选择文件夹"))
+        /*if (GUILayout.Button("选择文件夹"))
         {
             string _path = EditorUtility.OpenFolderPanel("选择文件夹", Application.dataPath, string.Empty).Replace('\\', '/');
 
             _path = GetValue(_path);
 
             m_config.m_psduiTemplatePath = _path;
-        }
+        }*/
 
         //m_config.m_fontPath =
 
         EditorGUILayout.EndHorizontal();
+        EditorGUILayout.Separator();
 
-        if (GUILayout.Button("创建"))
+
+
+        EditorGUILayout.BeginHorizontal();
+        EditorGUILayout.LabelField("配置文件路径:", m_config.m_configAssetPath);
+
+        EditorGUILayout.EndHorizontal();
+
+        var str = File.Exists(PSDImporterConst.__CONFIG_PATH) ? "写入" : "创建";
+        if (GUILayout.Button(str))
         {
             if (string.IsNullOrEmpty(m_config.m_commonAtlasPath) ||
                 string.IsNullOrEmpty(m_config.m_commonAtlasName) ||
@@ -125,6 +164,15 @@ public class PSD2UGUISettingWizard : ScriptableWizard
             ShowNotification(new GUIContent("创建配置成功!"));
 
             //Close();
+        }
+
+        EditorGUILayout.Separator();
+        EditorGUILayout.Separator();
+
+        if (GUILayout.Button("根据路径重置"))
+        {
+            m_config.m_fontPath = PSDImporterConst.DefaultFontFolder;
+            m_config.m_staticFontPath = PSDImporterConst.DefaultFontStaticFolder;
         }
     }
 
@@ -163,9 +211,10 @@ public class PSD2UGUISettingWizard : ScriptableWizard
 
         //_psd2UguiConfig = m_config;
 
-        AssetDatabase.DeleteAsset(m_config.m_configAssetPath);
+        var path = m_config.m_configAssetPath;
+        AssetDatabase.DeleteAsset(path);
 
-        AssetDatabase.CreateAsset(m_config, m_config.m_configAssetPath);
+        AssetDatabase.CreateAsset(m_config, path);
 
         AssetDatabase.SaveAssets();
 

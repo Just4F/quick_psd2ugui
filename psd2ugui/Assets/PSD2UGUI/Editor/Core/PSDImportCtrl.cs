@@ -170,6 +170,10 @@ namespace PSDUIImporter
 #endif
 
             Canvas temp = AssetDatabase.LoadAssetAtPath(PSDImporterConst.ASSET_PATH_CANVAS, typeof(Canvas)) as Canvas;
+            if (!temp)
+            {
+                Debug.LogError($"load at path {PSDImporterConst.ASSET_PATH_CANVAS} failed!");
+            }
             PSDImportUtility.canvas = GameObject.Instantiate(temp) as Canvas;
             PSDImportUtility.canvas.renderMode = RenderMode.ScreenSpaceOverlay;
 

@@ -1,15 +1,20 @@
-﻿using UnityEditor;
+﻿using System.IO;
+using System.Runtime.CompilerServices;
+using UnityEditor;
 using UnityEngine;
 
 namespace PSDUIImporter
 {
     public class PSDImporterConst
     {
-        public const string __CONFIG_PATH = "Assets/PSD2UGUI/PSD2UGUIConfig.asset";
-
-        public const string BASE_FOLDER = "UI/";
         public const string PNG_SUFFIX = ".png";
         public const string JPG_SUFFIX = ".jpg";
+
+        public static string DefaultBaseFolder = "Assets/PSD2UGUI/";
+        public static string BaseFolder = DefaultBaseFolder;
+        public static string DefaultConfigPath => GetDefaultConfigPath(BaseFolder);
+        public static string GetDefaultConfigPath(string baseFolder) => baseFolder + "PSD2UGUIConfig.asset";
+        public static string __CONFIG_PATH => DefaultConfigPath;
 
         /// <summary>
         /// 公用图片路径，按需修改
@@ -30,19 +35,21 @@ namespace PSDUIImporter
 
         public const string IMAGE = "Image";
 
+        public static string DefaultFontFolder => BaseFolder + "Font/";
         /// <summary>
         /// 字体路径，按需修改
         /// </summary>
-        public static string FONT_FOLDER = "Assets/PSD2UGUI/Font/";
+        public static string FONT_FOLDER = DefaultFontFolder;
+        public static string DefaultFontStaticFolder => BaseFolder + "Font/StaticFont/";
 
-        public static string FONT_STATIC_FOLDER = "Assets/PSD2UGUI/Font/StaticFont/";
+        public static string FONT_STATIC_FOLDER = DefaultFontStaticFolder;
 
         public const string FONT_SUFIX = ".ttf";
 
         /// <summary>
         /// 修改资源模板加载路径,不能放在resources目录
         /// </summary>
-        public static string PSDUI_PATH = "Assets/PSD2UGUI/Template/UI/";
+        public static string PSDUI_PATH => BaseFolder + "Template/UI/";
 
         public const string PSDUI_SUFFIX = ".prefab";
 
@@ -74,18 +81,33 @@ namespace PSDUIImporter
         /// <summary>
         /// 读取工具
         /// </summary>
-        public static void LoadConfig()
+        public static void LoadConfig([CallerFilePath] string filePath = default)
         {
+            var configPath = __CONFIG_PATH;
+            if (!string.IsNullOrEmpty(filePath))
+            {
+                var convertedFilePath = filePath.Replace(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+                convertedFilePath = Path.GetDirectoryName(convertedFilePath);
+                //convertedFilePath = $"{convertedFilePath}/../../";
+                convertedFilePath = Path.GetDirectoryName(convertedFilePath);
+                convertedFilePath = Path.GetDirectoryName(convertedFilePath);
+                convertedFilePath = convertedFilePath.Replace(@"\", "/");
+                var basePath = convertedFilePath.Replace(Application.dataPath, "Assets");
+                //basePath.Replace("Editor/Core/", "");
+                basePath = $"{basePath}/";
+                configPath = GetDefaultConfigPath(basePath);
+            }
             // 重读资源路径
-            PSD2UGUIConfig _config = AssetDatabase.LoadAssetAtPath<PSD2UGUIConfig>(__CONFIG_PATH);
+            PSD2UGUIConfig _config = AssetDatabase.LoadAssetAtPath<PSD2UGUIConfig>(configPath);
 
             if (_config != null)
             {
+                BaseFolder = _config._BaseFolderPath;
                 Globle_BASE_FOLDER = _config.m_commonAtlasPath;
                 Globle_FOLDER_NAME = _config.m_commonAtlasName;
                 FONT_FOLDER = _config.m_fontPath;
                 FONT_STATIC_FOLDER = _config.m_staticFontPath;
-                PSDUI_PATH = _config.m_psduiTemplatePath;
+                //PSDUI_PATH = _config.m_psduiTemplatePath;
 
 				// 重生成路径
                 ASSET_PATH_EMPTY = PSDUI_PATH + "Empty" + PSDUI_SUFFIX;
@@ -107,7 +129,7 @@ namespace PSDUIImporter
                 ASSET_PATH_LAYOUTELEMENT = PSDUI_PATH + "LayoutElement" + PSDUI_SUFFIX;
                 ASSET_PATH_TAB = PSDUI_PATH + "Tab" + PSDUI_SUFFIX;
                 ASSET_PATH_TABGROUP = PSDUI_PATH + "TabGroup" + PSDUI_SUFFIX;
-				
+
                 Debug.Log("Load config.");
             }
 
