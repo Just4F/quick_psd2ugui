@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using UnityEditor;
 using UnityEngine;
 
@@ -17,14 +18,39 @@ namespace PSDUIImporter
             if (!string.IsNullOrEmpty(inputFile) &&
                 inputFile.StartsWith(Application.dataPath))
             {
-                PSDImporterConst.LoadConfig();  //重载wizard配置
-
-                PSDImportCtrl import = new PSDUIImporter.PSDImportCtrl(inputFile);
-                import.BeginDrawUILayers();
-                import.BeginSetUIParents();
+                ImportPSDFromFile(inputFile);
             }
 
             GC.Collect();
+        }
+
+        static void ImportPSDFromFile(string assetPath)
+        {
+            Debug.Log($"import {assetPath}");
+            PSDImporterConst.LoadConfig();  //重载wizard配置
+
+            PSDImportCtrl import = new PSDUIImporter.PSDImportCtrl(assetPath);
+            import.BeginDrawUILayers();
+            import.BeginSetUIParents();
+
+            GC.Collect();
+        }
+
+        [MenuItem("Assets/Convert PSD to UGUI ...")]
+        public static void ImportPSDFromFile()
+        {
+            var obj = Selection.objects.FirstOrDefault();
+            if (obj)
+            {
+                string assetPath = AssetDatabase.GetAssetPath(obj);
+                if (!assetPath.EndsWith($".xml"))
+                {
+                    EditorUtility.DisplayDialog("Select xml file exported from psd to execute",
+                        "You muse select xml file exported from psd", "ok");
+                    return;
+                }
+                ImportPSDFromFile(assetPath);
+            }
         }
     }
 }

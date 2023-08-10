@@ -144,7 +144,21 @@ namespace PSDUIImporter
             if (EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo() == false) { return; }
 #endif
             PSDImportUtility.baseFilename = Path.GetFileNameWithoutExtension(xmlFilePath);
-            PSDImportUtility.baseDirectory = "Assets/" + Path.GetDirectoryName(xmlFilePath.Remove(0, Application.dataPath.Length + 1)) + "/";
+            //PSDImportUtility.baseDirectory = "Assets/" + Path.GetDirectoryName(xmlFilePath.Remove(0, Application.dataPath.Length + 1)) + "/";
+
+            // from disk
+            if (xmlFilePath.Contains($":"))
+            {
+                PSDImportUtility.baseDirectory = "Assets/" + Path.GetDirectoryName(xmlFilePath.Remove(0, Application.dataPath.Length + 1)) + "/";
+            }
+            else
+            {
+                // from right click menu
+                var fileName = Path.GetFileName(xmlFilePath);
+                PSDImportUtility.baseDirectory =
+                    xmlFilePath.Remove(xmlFilePath.Length - fileName.Length,
+                        fileName.Length);
+            }
         }
 
         private void InitCanvas()
